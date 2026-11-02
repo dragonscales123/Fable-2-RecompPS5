@@ -42,6 +42,8 @@ while (($#)); do
         *) echo "usage: ${0##*/} [--sdk DIR] [--vulkan DIR] [--title-id PPSAxxxxx]" >&2; exit 2 ;;
     esac
 done
+echo "payload SDK: $sdk${PS5_PAYLOAD_SDK:+ (from PS5_PAYLOAD_SDK)}"
+echo "PS5_Vulkan:  $vulkan${PS5_VULKAN_DIR:+ (from PS5_VULKAN_DIR)}"
 [[ -f $sdk/toolchain/prospero.cmake && -x $sdk/bin/prospero-lld ]] ||
     { echo "no built PS5 payload SDK at $sdk (--sdk; needs toolchain/ and bin/prospero-lld)" >&2; exit 2; }
 [[ -f $vulkan/.deps/native/radv-release/lib/libvulkan_radeon.ps5.a ]] ||
@@ -105,9 +107,16 @@ fi
 
 # 2. The title.
 build=$root/out/build/ps5
+# A build tree is tied to its toolchain: start afresh when it changes.
+toolchain=$sdk/toolchain/prospero.cmake
+if [[ -f $build/CMakeCache.txt ]] &&
+        ! grep -qxF "CMAKE_TOOLCHAIN_FILE:FILEPATH=$toolchain" "$build/CMakeCache.txt"; then
+    echo "toolchain changed: starting $build afresh"
+    rm -rf "$build"
+fi
 configure() {
     cmake -S "$root" -B "$build" -G Ninja \
-        -DCMAKE_TOOLCHAIN_FILE="$sdk/toolchain/prospero.cmake" \
+        -DCMAKE_TOOLCHAIN_FILE="$toolchain" \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_C_FLAGS_RELEASE="-O2 -DNDEBUG" -DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG" \
         -DCMAKE_VERBOSE_MAKEFILE=OFF \
