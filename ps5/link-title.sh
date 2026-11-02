@@ -67,6 +67,39 @@ stub libSceAgcDriver vendor/ps5/sdk/stubs/agc_driver_canary_link_stub.c
 source "$vulkan/tools/radv-link.sh"
 radv_link_recipe "$vulkan" "$sdk" "$archive" || exit 2
 
+# The SDK builds with -mcmodel=large, so code and data land in the large-model
+# sections, one per function (.ltext.*, .lrodata.*, .ldata.*, .lbss.*).
+# PS5_Vulkan's layout names only the small-model ones, so each large one
+# stays an output section of its own: Fable 2 has over 80,000 of them, past
+# the ELF header's 65,279 limit, and ps5-native-tool rejects the file ("ELF
+# section table overruns input"). A copy of the layout that merges them into
+# .text, .rodata, .data and .bss keeps the title to a handful of sections.
+ld_dir=$work/link/ld
+mkdir -p "$ld_dir"
+patched_script=() search_dirs=()
+for ((i = 0; i < ${#radv_linker_script[@]}; i++)); do
+    case ${radv_linker_script[i]} in
+        -T) script=${radv_linker_script[++i]}; cp "$script" "$ld_dir/"
+            patched_script+=(-T "$ld_dir/${script##*/}") ;;
+        -L) search_dirs+=("${radv_linker_script[++i]}") ;;
+        *) patched_script+=("${radv_linker_script[i]}") ;;
+    esac
+done
+merged=0
+for dir in "${search_dirs[@]}"; do
+    for layout in "$dir"/*.ld; do
+        [[ -f $layout && ! -e $ld_dir/${layout##*/} ]] || continue
+        sed -e 's/\*(\.text \.text\.\*)/*(.text .text.* .ltext .ltext.*)/' \
+            -e 's/\*(\.rodata \.rodata\.\*)/*(.rodata .rodata.* .lrodata .lrodata.*)/' \
+            -e 's/\*(\.data \.data\.\*)/*(.data .data.* .ldata .ldata.*)/' \
+            -e 's/\*(\.bss \.bss\.\*)/*(.bss .bss.* .lbss .lbss.*)/' "$layout" > "$ld_dir/${layout##*/}"
+        grep -q '\.ltext \.ltext\.\*' "$ld_dir/${layout##*/}" && merged=1
+    done
+done
+((merged)) || { echo "link-title.sh: no PS5_Vulkan layout with a .text rule to merge .ltext into" >&2; exit 2; }
+radv_linker_script=("${patched_script[@]}" -L "$ld_dir")
+for dir in "${search_dirs[@]}"; do radv_linker_script+=(-L "$dir"); done
+
 # libc names the recipe does not bind yet but the runtime calls: libc's
 # getcwd asks __getcwd, which only libkernel_sys exports, so it faults in a
 # title (std::filesystem::current_path, realpath, canonical). The platform
@@ -105,6 +138,16 @@ fi
     "$work/link/stubs/libSceAgc.so" "$work/link/stubs/libSceAgcDriver.so" \
     "${radv_link_inputs[@]}" \
     --as-needed "$sdk"/target/lib/*.so
+
+# ps5-native-tool reads the section count from the ELF header, which holds
+# at most 65,279 (more is stored elsewhere, as 0 in the header).
+section_count=$(python3 -c 'import struct,sys; f=open(sys.argv[1],"rb"); f.seek(0x3c); print(struct.unpack("<H",f.read(2))[0])' \
+    "$work/link/llvm-pie.elf")
+if ((section_count == 0)); then
+    echo "link-title.sh: the linked ELF has more than 65,279 sections, which ps5-native-tool cannot read" >&2
+    exit 1
+fi
+echo "link-title.sh: $section_count sections in the linked ELF"
 
 # An import that no module a title loads exports is null at run time, and its
 # first call jumps to address 0: refuse the title here, not on the console.
