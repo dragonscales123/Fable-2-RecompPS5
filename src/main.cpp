@@ -8,16 +8,26 @@
 
 #include "fable_2_app.h"
 #include "fps_meter.h"
+// The probes under _WIN32 are research tools built on Windows memory queries,
+// SEH and threads (env-gated dumps, VEH and stall loggers). Elsewhere (the
+// PS5) they are left out, and the guest functions some of them override run
+// unmodified. Order kept: fable2_text_append.h uses fable2_glyph_probe.h.
+#ifdef _WIN32
 #include "fable2_text_probe.h"
 #include "fable2_glyph_probe.h"
+#endif
 #include "fable2_hotfuncs.h"
+#ifdef _WIN32
 #include "fable2_heap_scan.h"
+#endif
 #include "fable2_text_append.h"
 #include "fable2_state_probe.h"
 #include "fable2_menu_probe.h"  // main-menu input path (mod-menu hook points)
 #include "fable2_modmenu.h"  // 6th "MOD OPTION" selectable main-menu item
+#ifdef _WIN32
 #include "fable2_av_probe.h"  // self-installs a guest-PC AV logger (VEH)
 #include "fable2_stall_dump.h"  // self-installs a render-stall thread dumper
+#endif
 // #include "fable2_ui_render_probe.h"
 #include "keyboard_gamepad.h"
 

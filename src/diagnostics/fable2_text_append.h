@@ -872,8 +872,10 @@ extern "C" void UITextElement_Draw(PPCContext& __restrict ctx, uint8_t* base) {
       const char* es = std::getenv("FABLE2_TA_SHIFT");
       shift = es ? (uint32_t)std::atoi(es) : 0;
     }
+#ifdef _WIN32  // fable2_glyph_probe.h is Windows-only (main.cpp)
     if (shift > 0)
       fable2::glyphprobe::shift_vertex_x(base, (uint32_t)ctx.r3.u64, shift);
+#endif
   }
 }
 

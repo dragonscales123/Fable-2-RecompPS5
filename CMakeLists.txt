@@ -5,6 +5,13 @@
 cmake_minimum_required(VERSION 3.25)
 project(fable_2 LANGUAGES CXX)
 
+# PlayStation 5 homebrew (the PS5 payload SDK's toolchain sets PS5): Vulkan
+# through the SDK's Xenos GPU, linked and packaged as a title. See
+# cmake/Fable2Ps5.cmake and docs/PS5.md.
+if(PS5)
+    include(cmake/Fable2Ps5.cmake)
+endif()
+
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS constants/game_versions.json)
 execute_process(COMMAND ${Python3_EXECUTABLE}
@@ -93,6 +100,12 @@ set(FABLE2_SOURCES
     src/core/fable2_address_scan.cpp
     ${HOTFUNC_SOURCES}
 )
+if(PS5)
+    # Title setup before main, and libc names the console does not export.
+    list(APPEND FABLE2_SOURCES
+        src/platform/ps5_title.cpp
+        src/platform/ps5_libc.cpp)
+endif()
 
 if(WIN32)
     add_executable(fable_2 WIN32 ${FABLE2_SOURCES})
@@ -245,7 +258,11 @@ add_custom_target(fable_2_lua_staging
   DEPENDS ${FABLE2_LUA_FILES}
   COMMENT "Staging src/lua/* -> data/scripts/recomp/ + dir.manifest (content root + exe dir)"
 )
-add_dependencies(fable_2 fable_2_lua_staging)
+# On PS5 the game files live in game/ and the title folder is packaged by
+# ps5/link-title.sh, which copies the scripts in itself.
+if(NOT PS5)
+    add_dependencies(fable_2 fable_2_lua_staging)
+endif()
 
 # The remote-control CLI client is a debug-only feature (see the
 # FABLE2_REMOTE_CONTROL gate above), so only stage it for Debug builds.

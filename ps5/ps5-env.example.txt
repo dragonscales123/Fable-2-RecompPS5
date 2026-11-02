@@ -1,0 +1,12 @@
+# Fable 2 Recomp PS5: optional switches. Rename this file to ps5-env.txt in
+# the title folder (/data/homebrew/PPSA99214/) to use it. A title gets no
+# environment, so ps5_title.cpp reads KEY=VALUE lines from it before main.
+#
+# Any SDK setting (cvar) can be set as REX_<NAME>: gpu_vsync -> REX_GPU_VSYNC.
+# Lines starting with # are ignored.
+
+# Log every Vulkan debug message (slow; for chasing renderer problems).
+#REX_VULKAN_LOG_DEBUG_MESSAGES=true
+
+# Run a modified or non-catalogue default.xex (the hash is still logged).
+#REX_SKIPHASH=true
