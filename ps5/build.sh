@@ -108,12 +108,16 @@ fi
 # 2. The title.
 build=$root/out/build/ps5
 # A build tree is tied to its toolchain: start afresh when it changes.
-toolchain=$sdk/toolchain/prospero.cmake
-if [[ -f $build/CMakeCache.txt ]] &&
-        ! grep -qxF "CMAKE_TOOLCHAIN_FILE:FILEPATH=$toolchain" "$build/CMakeCache.txt"; then
+# (Recorded in our own file: the PS5 toolchain file rewrites CMake's cached
+# CMAKE_TOOLCHAIN_FILE, so the cache can't be compared.)
+toolchain=$(readlink -f "$sdk/toolchain/prospero.cmake")
+toolchain_record=$build/ps5-toolchain.txt
+if [[ -d $build && -f $toolchain_record && $(cat "$toolchain_record") != "$toolchain" ]]; then
     echo "toolchain changed: starting $build afresh"
     rm -rf "$build"
 fi
+mkdir -p "$build"
+echo "$toolchain" > "$toolchain_record"
 # Perf counters stay on (the SDK default): Fable2App reads the frame time
 # through rex::perf::GetSnapshotCounter, which only exists with them. In a
 # Release build the counting itself is compiled out.
