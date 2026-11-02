@@ -75,6 +75,7 @@ radv_link_recipe "$vulkan" "$sdk" "$archive" || exit 2
 # section table overruns input"). A copy of the layout that merges them into
 # .text, .rodata, .data and .bss keeps the title to a handful of sections.
 ld_dir=$work/link/ld
+rm -rf "$ld_dir"  # fresh each link: a copy left by the last one is not patched again
 mkdir -p "$ld_dir"
 patched_script=() search_dirs=()
 for ((i = 0; i < ${#radv_linker_script[@]}; i++)); do
