@@ -44,7 +44,9 @@
 //   0x822426E0  wait loop: GpuProgressCheck_82B9BF90 (0 = ready -> leave),
 //               else re-run the readiness test and spin while not ready.
 //   0x8224270C  call sub_82B9BEC8(r1+80), then the epilogue at 0x82242714.
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 #include "fable_2_pch.h"
 

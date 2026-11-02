@@ -1,6 +1,8 @@
 # --- Game content (ripped disc; see README "How to extract") ---------------
 default.xex
 /data/
+# PS5 port: your own extracted disc (default.xex, data/), never committed
+/game/
 /nxeart/
 /$SystemUpdate/
 /Gamefiles/
