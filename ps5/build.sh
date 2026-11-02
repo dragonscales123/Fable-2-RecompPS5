@@ -114,6 +114,9 @@ if [[ -f $build/CMakeCache.txt ]] &&
     echo "toolchain changed: starting $build afresh"
     rm -rf "$build"
 fi
+# Perf counters stay on (the SDK default): Fable2App reads the frame time
+# through rex::perf::GetSnapshotCounter, which only exists with them. In a
+# Release build the counting itself is compiled out.
 configure() {
     cmake -S "$root" -B "$build" -G Ninja \
         -DCMAKE_TOOLCHAIN_FILE="$toolchain" \
@@ -121,7 +124,7 @@ configure() {
         -DCMAKE_C_FLAGS_RELEASE="-O2 -DNDEBUG" -DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG" \
         -DCMAKE_VERBOSE_MAKEFILE=OFF \
         -DREXSDK_DIR="$rexsdk" -DREXGLUE_HOST_TOOL="$rexglue" \
-        -DREXGLUE_ENABLE_TRACY=OFF -DREXGLUE_ENABLE_PERF_COUNTERS=OFF \
+        -DREXGLUE_ENABLE_TRACY=OFF \
         -DFABLE2_PS5_VULKAN_DIR="$vulkan" -DFABLE2_PS5_TITLE_ID="$title_id"
 }
 configure
