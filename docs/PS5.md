@@ -58,6 +58,18 @@ On PS5 the hand-tuned guest function overrides (`src/core/hotfunc/`) are left
 out (`FABLE2_HOTFUNCS=OFF`): they are copies of the stock v0.10.0 code
 generator's output, and the PS5 SDK's generator emits different code.
 
+To have each build also copied to a folder on Windows, put your settings in
+`ps5/build.local.sh` (git ignores it), for example:
+
+```
+copy_to=/mnt/c/Users/<you>/Desktop/Fable2RecompPS5
+PS5_PAYLOAD_SDK=~/bluedragon-ps5/PS5_VulkanTemplate/.deps/native/ps5-payload-sdk
+PS5_VULKAN_DIR=~/bluedragon-ps5/PS5_Vulkan
+```
+
+`--copy-to DIR` does the same for one build. The title folder lands in
+`DIR/PPSA99214/`; a `fable2_config.toml` already there is kept.
+
 The result is `out/build/ps5/dist/PPSA99214/`: `eboot.bin`, `sce_sys/`,
 `sce_module/`, the recomp's Lua scripts in `data/scripts/recomp/`,
 `fable2_config.toml` and `ps5-env.example.txt`.

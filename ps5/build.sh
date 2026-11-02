@@ -2,7 +2,11 @@
 # Fable 2 Recomp - build the PS5 homebrew title (docs/PS5.md), from re:Blue
 # PS5's ps5/build.sh.
 #
-#   ps5/build.sh [--sdk DIR] [--vulkan DIR] [--title-id PPSAxxxxx]
+#   ps5/build.sh [--sdk DIR] [--vulkan DIR] [--title-id PPSAxxxxx] [--copy-to DIR]
+#
+# --copy-to DIR (or copy_to=DIR in ps5/build.local.sh, which git ignores):
+# also copy the finished title folder to DIR/<TITLE_ID>/, e.g. a Windows
+# folder under /mnt/c. A fable2_config.toml already there is kept.
 #
 # Needs: your own Fable 2 GOTY default.xex in game/ (or the repository root),
 # the SDK submodule (thirdparty/rexglue-sdk, branch fable2-ps5), a PS5 payload
@@ -34,12 +38,21 @@ sdk=${PS5_PAYLOAD_SDK:-$(first_dir "$parent/PS5_VulkanTemplate/.deps/native/ps5-
 vulkan=${PS5_VULKAN_DIR:-$(first_dir "$parent/PS5_Vulkan" "$HOME/bluedragon-ps5/PS5_Vulkan")}
 rexsdk=$root/thirdparty/rexglue-sdk
 title_id=PPSA99214
+copy_to=${FABLE2_PS5_COPY_TO:-}
+# Personal settings (copy_to=..., PS5_PAYLOAD_SDK=..., PS5_VULKAN_DIR=...).
+if [[ -f $root/ps5/build.local.sh ]]; then
+    # shellcheck source=/dev/null
+    source "$root/ps5/build.local.sh"
+    sdk=${PS5_PAYLOAD_SDK:-$sdk}
+    vulkan=${PS5_VULKAN_DIR:-$vulkan}
+fi
 while (($#)); do
     case $1 in
         --sdk) sdk=$2; shift 2 ;;
         --vulkan) vulkan=$2; shift 2 ;;
         --title-id) title_id=$2; shift 2 ;;
-        *) echo "usage: ${0##*/} [--sdk DIR] [--vulkan DIR] [--title-id PPSAxxxxx]" >&2; exit 2 ;;
+        --copy-to) copy_to=$2; shift 2 ;;
+        *) echo "usage: ${0##*/} [--sdk DIR] [--vulkan DIR] [--title-id PPSAxxxxx] [--copy-to DIR]" >&2; exit 2 ;;
     esac
 done
 echo "payload SDK: $sdk${PS5_PAYLOAD_SDK:+ (from PS5_PAYLOAD_SDK)}"
@@ -137,4 +150,12 @@ cmake --build "$build" --target fable_2_codegen
 configure
 cmake --build "$build" --target fable_2 ${BUILD_JOBS:+-j "$BUILD_JOBS"}
 echo "title folder: $build/dist/$title_id"
+if [[ -n $copy_to ]]; then
+    dest=$copy_to/$title_id
+    mkdir -p "$dest"
+    # Everything but a config the player already has there.
+    (cd "$build/dist/$title_id" && tar -cf - --exclude=./fable2_config.toml .) | tar -xf - -C "$dest"
+    [[ -f $dest/fable2_config.toml ]] || cp "$build/dist/$title_id/fable2_config.toml" "$dest/"
+    echo "copied to: $dest"
+fi
 echo "copy it to /data/homebrew/$title_id/, and the contents of game/ (default.xex, data/, nxeart) into that same folder (docs/PS5.md)"
