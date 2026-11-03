@@ -23,3 +23,8 @@
 
 # Performance overlay (FPS, thread load, memory) at startup; L3 + R3 toggles it.
 #REX_SHOW_DEBUG_OVERLAY=true
+
+# Hot pages (pages the CPU keeps rewriting) are compared with their last upload
+# once per guest CPU/GPU sync point instead of on every draw. If geometry or
+# textures look stale or garbled, set this to false.
+#REX_SHARED_MEMORY_HOT_PAGE_CHECK_EPOCHS=false
