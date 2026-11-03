@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <fstream>
 
+#include <rex/logging.h>
 #include <rex/ppc/func.h>
 
 #include "fable2_func_trace.h"
@@ -115,14 +116,29 @@ extern "C" void MainRenderLoop_82B9CD68(PPCContext& ctx, uint8_t* base) {
     static std::atomic<uint64_t> calls{0};
     static std::atomic<int64_t> window_start_us{0};
     static std::atomic<uint64_t> window_calls{0};
+    static std::atomic<int64_t> last_us{0};
+    static std::atomic<int64_t> worst_us{0};     // slowest frame in the window
+    static std::atomic<uint64_t> slow_frames{0};  // frames over 40 ms (a missed 30)
+    // A relative path is fine on Windows (the exe dir is the working
+    // directory); a PS5 title has none, so there the lines go to the
+    // runtime log instead.
+#ifdef _WIN32
     static std::ofstream& logf = [] -> std::ofstream& {
       std::remove("fps_meter.log");  // fresh log per run
       static std::ofstream f{"fps_meter.log", std::ios::app};
       return f;
     }();
+#endif
     const int64_t now_us = std::chrono::duration_cast<std::chrono::microseconds>(
                                std::chrono::steady_clock::now().time_since_epoch())
                                .count();
+    const int64_t prev = last_us.exchange(now_us, std::memory_order_relaxed);
+    if (prev != 0) {
+      const int64_t dt = now_us - prev;
+      if (dt > worst_us.load(std::memory_order_relaxed))
+        worst_us.store(dt, std::memory_order_relaxed);
+      if (dt > 40'000) slow_frames.fetch_add(1, std::memory_order_relaxed);
+    }
     calls.fetch_add(1, std::memory_order_relaxed);
     int64_t start = window_start_us.load(std::memory_order_relaxed);
     if (start == 0)
@@ -132,14 +148,21 @@ extern "C" void MainRenderLoop_82B9CD68(PPCContext& ctx, uint8_t* base) {
       window_calls.store(0, std::memory_order_relaxed);
       window_start_us.store(now_us, std::memory_order_relaxed);
       const double secs = (now_us - start) / 1'000'000.0;
+      const double worst_ms = worst_us.exchange(0, std::memory_order_relaxed) / 1000.0;
+      const uint64_t slow = slow_frames.exchange(0, std::memory_order_relaxed);
+      char buf[160];
+      std::snprintf(buf, sizeof(buf),
+                    "mainloop rate=%.1f/s worst=%.1fms slow(>40ms)=%llu (total %llu)",
+                    secs > 0 ? n / secs : 0.0, worst_ms, (unsigned long long)slow,
+                    (unsigned long long)calls.load(std::memory_order_relaxed));
+#ifdef _WIN32
       if (logf) {
-        char buf[128];
-        std::snprintf(buf, sizeof(buf), "mainloop rate=%.1f/s (total %llu)\n",
-                      n / secs,
-                      (unsigned long long)calls.load(std::memory_order_relaxed));
-        logf << buf;
+        logf << buf << "\n";
         logf.flush();
       }
+#else
+      REXSYS_INFO("[fps-meter] {}", buf);
+#endif
     }
   }
   // F5 (host) -> run the external Lua file (per-frame, responsive).
