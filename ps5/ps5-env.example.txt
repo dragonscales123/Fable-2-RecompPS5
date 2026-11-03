@@ -28,3 +28,5 @@
 # once per guest CPU/GPU sync point instead of on every draw. If geometry or
 # textures look stale or garbled, set this to false.
 #REX_SHARED_MEMORY_HOT_PAGE_CHECK_EPOCHS=false
+# Stricter: also restart the check at every GPU fence / memory write.
+#REX_SHARED_MEMORY_HOT_PAGE_EPOCH_ON_GPU_SIGNALS=true
