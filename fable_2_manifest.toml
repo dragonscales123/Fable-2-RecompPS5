@@ -29,6 +29,15 @@ file_path = "default.xex"
 out_directory_path = "generated/default"
 includes = ["fable2_switch_tables.toml"]
 
+# mtmsrd/mfmsr (the 360's "interrupts off" around spinlocks and refcounts)
+# without the SDK global lock. The guest's own lwarx/stwcx compare-and-swap
+# still does the mutual exclusion. It must sit here in [entrypoint], where
+# codegen reads its flags: the `skip_msr = true` further down sits inside the
+# last [[entrypoint.midasm_hook]] table and is never read. On the PS5 the lock (taken tens of thousands of times a second
+# by the render thread) contended with the GPU thread's memory-watch work and
+# cost about a third of its time.
+skip_msr = true
+
 # setjmp/longjmp: the recompiler redirects these to native implementations.
 # longjmp (0x82CA9260) restores the full guest state from the jmp_buf and
 # calls RtlUnwind (thunk 0x832B25BC) on the unwind path.
