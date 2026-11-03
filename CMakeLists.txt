@@ -104,6 +104,7 @@ if(PS5)
     # Title setup before main, and libc names the console does not export.
     list(APPEND FABLE2_SOURCES
         src/platform/ps5_title.cpp
+        src/platform/ps5_radv_wait.cpp
         src/platform/ps5_libc.cpp
         src/platform/ps5_debug_heap.cpp)
 endif()

@@ -130,6 +130,9 @@ done
 # A title must not exit(): it asks the shell to close it
 # (src/platform/ps5_title.cpp defines the wrappers).
 radv_link_flags+=(--wrap=exit --wrap=_exit --wrap=_Exit)
+# RADV's GPU wait sleeps 1 ms between marker polls; this title cuts that to
+# 100 us (src/platform/ps5_radv_wait.cpp).
+radv_link_flags+=(--wrap=radv_ps5_sleep_us)
 if ((${#extra_local[@]})); then
     {
         printf '{\n    local:\n'

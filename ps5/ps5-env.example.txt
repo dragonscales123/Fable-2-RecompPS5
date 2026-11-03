@@ -16,3 +16,7 @@
 #REX_PROFILE=1
 #REX_PROFILE_HZ=250
 #REX_PROFILE_INTERVAL=10
+
+# RADV's GPU wait: microseconds to sleep between polls once its 1.5 ms spin
+# is over (RADV itself sleeps 1000; 0 = just yield).
+#FABLE2_RADV_WAIT_US=100
