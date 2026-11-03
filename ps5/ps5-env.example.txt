@@ -38,3 +38,7 @@
 # A CPU write fault invalidates up to 1 MB around it, but stops at pages a
 # texture watches. If textures look stale (not updating), set this to true.
 #REX_SHARED_MEMORY_WIDEN_INTO_WATCHED_PAGES=true
+
+# 60 fps cap: the game waits two vblanks per frame, so 120 Hz vblanks (2x the
+# guest's 60 Hz) cap it at 60 instead of 30. Leave REX_VSYNC on (unset).
+#REX_GUEST_VBLANK_MULTIPLIER=2
