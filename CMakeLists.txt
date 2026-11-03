@@ -104,7 +104,15 @@ if(PS5)
     # Title setup before main, and libc names the console does not export.
     list(APPEND FABLE2_SOURCES
         src/platform/ps5_title.cpp
-        src/platform/ps5_libc.cpp)
+        src/platform/ps5_libc.cpp
+        src/platform/ps5_debug_heap.cpp)
+endif()
+# PS5: the checking allocator (src/platform/ps5_debug_heap.cpp), for chasing
+# heap damage. Only that file's flags change, so switching it rebuilds one file.
+option(FABLE2_PS5_DEBUG_HEAP "PS5: guard every heap block and report the first damaged one" OFF)
+if(PS5 AND FABLE2_PS5_DEBUG_HEAP)
+    set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/src/platform/ps5_debug_heap.cpp"
+        PROPERTIES COMPILE_DEFINITIONS FABLE2_PS5_DEBUG_HEAP=1 SKIP_PRECOMPILE_HEADERS ON)
 endif()
 
 if(WIN32)

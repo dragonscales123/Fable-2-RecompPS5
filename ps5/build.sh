@@ -142,7 +142,8 @@ configure() {
         -DCMAKE_VERBOSE_MAKEFILE=OFF \
         -DREXSDK_DIR="$rexsdk" -DREXGLUE_HOST_TOOL="$rexglue" \
         -DREXGLUE_ENABLE_TRACY=OFF \
-        -DFABLE2_PS5_VULKAN_DIR="$vulkan" -DFABLE2_PS5_TITLE_ID="$title_id"
+        -DFABLE2_PS5_VULKAN_DIR="$vulkan" -DFABLE2_PS5_TITLE_ID="$title_id" \
+        -DFABLE2_PS5_DEBUG_HEAP="${FABLE2_PS5_DEBUG_HEAP:-OFF}"
 }
 configure
 # Codegen writes generated/default/sources.cmake; configure again to compile it.

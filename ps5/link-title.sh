@@ -118,6 +118,15 @@ done
 # The libc names src/platform/ps5_libc.cpp defines stay local too: a
 # console module defines some of them, and a title publishes no exports.
 extra_local+=(pathconf ffs tempnam timegm backtrace_symbols fork setsid isatty)
+# The checking allocator (FABLE2_PS5_DEBUG_HEAP) defines abort(), so its scan
+# runs first: local too, or the linker would export it over libc's. Only then:
+# a version script may not name a symbol the link does not define.
+for object in "${objects[@]}"; do
+    if [[ $object == *ps5_debug_heap.cpp.o ]] &&
+            "$sdk/bin/llvm-nm" --defined-only "$object" 2>/dev/null | grep -q " T abort$"; then
+        extra_local+=(abort)
+    fi
+done
 # A title must not exit(): it asks the shell to close it
 # (src/platform/ps5_title.cpp defines the wrappers).
 radv_link_flags+=(--wrap=exit --wrap=_exit --wrap=_Exit)
