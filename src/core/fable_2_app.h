@@ -8,6 +8,7 @@
 #include <rex/filesystem.h>
 
 #include <rex/perf/counter.h>
+#include <rex/platform.h>
 #include <rex/rex_app.h>
 #include <rex/system.h>
 #include <rex/system/gpu_plugin.h>
@@ -177,6 +178,19 @@ class Fable2App : public rex::ReXApp {
                     "(SDK without depth_bias_shader?)");
       }
     }
+#if REX_PLATFORM_PS5
+    // 60 fps cap on the PS5: the game waits two GPU vblanks per frame (30 fps
+    // at 60 Hz), so 120 Hz vblanks cap it at 60 with its own pacing. Seeded
+    // only at the compiled default, so REX_GUEST_VBLANK_MULTIPLIER=1 in
+    // ps5-env.txt restores the original 30 fps cap.
+    if (rex::cvar::GetFlagSource("guest_vblank_multiplier") == rex::cvar::Source::kDefault) {
+      if (rex::cvar::SetFlagByName("guest_vblank_multiplier", "2")) {
+        REXSYS_INFO("[fable2-config] seeded guest_vblank_multiplier=2 (60 fps cap)");
+      } else {
+        REXSYS_WARN("[fable2-config] guest_vblank_multiplier missing (SDK too old?)");
+      }
+    }
+#endif
 
     // Feed the F3 debug overlay with guest FPS (below). The GPU plugin
     // records per-guest-swap frame timing into the shared perf registry

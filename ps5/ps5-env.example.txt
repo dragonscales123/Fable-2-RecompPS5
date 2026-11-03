@@ -39,6 +39,7 @@
 # texture watches. If textures look stale (not updating), set this to true.
 #REX_SHARED_MEMORY_WIDEN_INTO_WATCHED_PAGES=true
 
-# 60 fps cap: the game waits two vblanks per frame, so 120 Hz vblanks (2x the
-# guest's 60 Hz) cap it at 60 instead of 30. Leave REX_VSYNC on (unset).
-#REX_GUEST_VBLANK_MULTIPLIER=2
+# Frame cap. The game waits two vblanks per frame; the PS5 build ticks them at
+# 120 Hz (2x the guest's 60 Hz), capping it at 60 fps. 1 = the original 30 fps
+# cap. Leave REX_VSYNC on (unset).
+#REX_GUEST_VBLANK_MULTIPLIER=1
