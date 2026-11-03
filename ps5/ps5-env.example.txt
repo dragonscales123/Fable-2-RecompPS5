@@ -20,3 +20,6 @@
 # RADV's GPU wait: microseconds to sleep between polls once its 1.5 ms spin
 # is over (RADV itself sleeps 1000; 0 = just yield).
 #FABLE2_RADV_WAIT_US=100
+
+# Performance overlay (FPS, thread load, memory) at startup; L3 + R3 toggles it.
+#REX_SHOW_DEBUG_OVERLAY=true
