@@ -34,3 +34,7 @@
 # Guest draw constants as dynamic uniform buffers (fewer descriptor writes per
 # draw). If lighting, colours or object positions look wrong, set to false.
 #REX_VULKAN_DYNAMIC_CONSTANT_BUFFERS=false
+
+# A CPU write fault invalidates up to 1 MB around it, but stops at pages a
+# texture watches. If textures look stale (not updating), set this to true.
+#REX_SHARED_MEMORY_WIDEN_INTO_WATCHED_PAGES=true
