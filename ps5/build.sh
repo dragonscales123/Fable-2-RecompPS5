@@ -157,6 +157,10 @@ if [[ -n $copy_to ]]; then
     # Everything but a config the player already has there.
     (cd "$build/dist/$title_id" && tar -cf - --exclude=./fable2_config.toml .) | tar -xf - -C "$dest"
     [[ -f $dest/fable2_config.toml ]] || cp "$build/dist/$title_id/fable2_config.toml" "$dest/"
-    echo "copied to: $dest"
+    # The unstripped link output, for symbolizing faults and profiles
+    # (kept beside the title folder, not inside it, so it never goes to the console).
+    mkdir -p "$copy_to/symbols"
+    cp "$build/ps5-link/link/llvm-pie.elf" "$copy_to/symbols/fable_2.elf"
+    echo "copied to: $dest (symbols: $copy_to/symbols/fable_2.elf)"
 fi
 echo "copy it to /data/homebrew/$title_id/, and the contents of game/ (default.xex, data/, nxeart) into that same folder (docs/PS5.md)"

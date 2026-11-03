@@ -10,3 +10,9 @@
 
 # Run a modified or non-catalogue default.xex (the hash is still logged).
 #REX_SKIPHASH=true
+
+# Sampling profiler: where each thread spends its time, every 10 s, in
+# /app0/profile.txt (symbolize with symbols/fable_2.elf from the build).
+#REX_PROFILE=1
+#REX_PROFILE_HZ=250
+#REX_PROFILE_INTERVAL=10
