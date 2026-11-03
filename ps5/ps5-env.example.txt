@@ -30,3 +30,7 @@
 #REX_SHARED_MEMORY_HOT_PAGE_CHECK_EPOCHS=false
 # Stricter: also restart the check at every GPU fence / memory write.
 #REX_SHARED_MEMORY_HOT_PAGE_EPOCH_ON_GPU_SIGNALS=true
+
+# Guest draw constants as dynamic uniform buffers (fewer descriptor writes per
+# draw). If lighting, colours or object positions look wrong, set to false.
+#REX_VULKAN_DYNAMIC_CONSTANT_BUFFERS=false
