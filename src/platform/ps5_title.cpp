@@ -62,6 +62,9 @@ void Breadcrumb(const char *line) {
 }
 
 [[noreturn]] void ExitTitle(int status) {
+  char line[96];
+  std::snprintf(line, sizeof(line), "exit: status %d, asking the shell to close the title", status);
+  Breadcrumb(line);
   std::fprintf(stderr, "exit status %d: asking the shell to close the title\n", status);
   std::fflush(nullptr);
   (void)sceSystemServiceLoadExec("exit", nullptr);
