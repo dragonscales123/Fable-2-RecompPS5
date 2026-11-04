@@ -44,6 +44,6 @@
 # cap. Leave REX_VSYNC on (unset).
 #REX_GUEST_VBLANK_MULTIPLIER=1
 
-# Submit GPU work every N draws (0 = off), so a synchronous readback (memexport,
+# Submit GPU work every N draws (PS5 default 512; 0 = off), so a synchronous readback (memexport,
 # needed by the glowing trail) has less queued work to wait for.
-#REX_VULKAN_SUBMIT_EVERY_DRAWS=128
+#REX_VULKAN_SUBMIT_EVERY_DRAWS=0
