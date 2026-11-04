@@ -44,6 +44,7 @@
 # cap. Leave REX_VSYNC on (unset).
 #REX_GUEST_VBLANK_MULTIPLIER=1
 
-# Memexport readback hands the game data from two memexport draws back, so the
-# GPU thread rarely waits for it. 1 = the previous draw's data (waits often).
-#REX_READBACK_MEMEXPORT_FAST_LATENCY=1
+# Memexport readback is asynchronous: the data reaches guest memory when the GPU
+# has finished it, without the GPU thread waiting. false = the old synchronous
+# readback (waits for the GPU at every memexport draw).
+#REX_READBACK_MEMEXPORT_ASYNC=false
