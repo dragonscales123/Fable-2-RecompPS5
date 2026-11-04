@@ -43,3 +43,7 @@
 # 120 Hz (2x the guest's 60 Hz), capping it at 60 fps. 1 = the original 30 fps
 # cap. Leave REX_VSYNC on (unset).
 #REX_GUEST_VBLANK_MULTIPLIER=1
+
+# Memexport readback hands the game data from two memexport draws back, so the
+# GPU thread rarely waits for it. 1 = the previous draw's data (waits often).
+#REX_READBACK_MEMEXPORT_FAST_LATENCY=1
