@@ -48,5 +48,6 @@
 # needed by the glowing trail) has less queued work to wait for.
 #REX_VULKAN_SUBMIT_EVERY_DRAWS=0
 
-# Record and submit Vulkan command buffers on a separate thread (experimental).
-#REX_VULKAN_SUBMIT_THREAD=true
+# Vulkan command buffers are recorded and submitted on a separate thread (PS5
+# default). false = on the GPU command thread, as before.
+#REX_VULKAN_SUBMIT_THREAD=false
