@@ -47,3 +47,6 @@
 # Submit GPU work every N draws (PS5 default 512; 0 = off), so a synchronous readback (memexport,
 # needed by the glowing trail) has less queued work to wait for.
 #REX_VULKAN_SUBMIT_EVERY_DRAWS=0
+
+# Record and submit Vulkan command buffers on a separate thread (experimental).
+#REX_VULKAN_SUBMIT_THREAD=true
