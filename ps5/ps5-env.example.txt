@@ -55,3 +55,7 @@
 # Test mode for the GPU command pipeline work: let up to N prepared draws wait
 # before being encoded (same thread). 0 = encode each draw right away.
 #REX_VULKAN_DRAW_ENCODE_LAG=8
+
+# Encode draws on a separate "GPU Encode" thread (default on). Set to false
+# to encode on the GPU command thread (e.g. if something renders wrongly).
+#REX_VULKAN_DRAW_ENCODE_THREAD=false
