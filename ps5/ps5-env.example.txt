@@ -51,3 +51,7 @@
 # Vulkan command buffers are recorded and submitted on a separate thread (PS5
 # default). false = on the GPU command thread, as before.
 #REX_VULKAN_SUBMIT_THREAD=false
+
+# Test mode for the GPU command pipeline work: let up to N prepared draws wait
+# before being encoded (same thread). 0 = encode each draw right away.
+#REX_VULKAN_DRAW_ENCODE_LAG=8
