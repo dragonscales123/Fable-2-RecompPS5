@@ -1,4 +1,28 @@
-# Fable 2 — ReXGlue Recompiled Project
+# Fable 2 Recomp — PS5 port
+
+**This fork is a port of [Fable 2 Recomp](https://github.com/himdo/Fable-2-Recomp) to the PS5, as a homebrew title for a jailbroken console.** It is not the Windows version: for that, use the original project. The PS5 work lives on the `ps5-port` branch, on top of the [ReXGlue SDK PS5 port](https://github.com/dragonscales123/rexglue-sdk-PS5) (branch `fable2-ps5`).
+
+The game renders through the SDK's Xbox 360 GPU emulation on Vulkan, with Mesa's RADV driver built into the title. Build instructions and requirements are in [docs/PS5.md](docs/PS5.md). You need your own Fable 2 GOTY (USA/Europe) disc; nothing from the game is in this repository.
+
+## PS5 progress
+
+Work in progress, but playable:
+
+- [x] Boots and runs on a PS5, in game with controller input
+- [x] Shaders cached between runs, so effects don't hitch the first time they appear
+- [x] 60 fps cap, held in normal gameplay
+- [x] GPU command processing split across several threads (command parsing, draw encoding, submission)
+- [ ] Locked 60 fps in the heaviest areas: Bowerstone Market is at about 35 fps (it started around 22)
+- [ ] Occasional texture pop-in
+- [ ] The glowing breadcrumb trail can flicker at some camera angles
+
+Performance work is ongoing, with Bowerstone Market as the benchmark.
+
+---
+
+The rest of this README is the original Windows project's.
+
+## Fable 2 — ReXGlue Recompiled Project (original)
 First and for most this project was made to test the capabilities of local and open source AI. This project was made using Qwen3.8 27b. After about an hour it got the game running. Then after a large amount of human trial and error I was able to get enough of the functions mapped to be able to complete the game. I currently do not consider this to be fully complete as I have yet to 100% the game. The sha256 of the iso that started this project is: "685a0d3bea9718812f17bcd155907a5359a548b6d3d8342dd2a6c944f45e35ff" and its the Fable 2 GOTY for USA and Europe.
 
 Recompilation of Fable 2 (Xbox 360, title ID 4D5307F1) using the [ReXGlue SDK](https://github.com/rexglue/rexglue-sdk) v0.10.0. Guest PPC code is statically recompiled to C++ at build time by `rexglue codegen`, driven by `fable_2_manifest.toml`.
