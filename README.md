@@ -10,7 +10,7 @@ A public beta for the PS5 is on the [Releases](https://github.com/dragonscales12
 
 ## PS5 progress
 
-Work in progress, but playable from start to finish in normal gameplay:
+Work in progress, but playable:
 
 - [x] Boots and runs on a PS5, in game with controller input
 - [x] Shaders cached between runs, so effects don't hitch the first time they appear
