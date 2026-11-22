@@ -12,7 +12,7 @@ runs at about 49 fps so far (55-60 fps elsewhere). See the progress list in
 the README.
 
 You need your own Fable 2 GOTY (USA/Europe) disc. Nothing from the game is in
-this repository, and nothing derived from it should be published.
+this repository.
 
 ## What you need
 
