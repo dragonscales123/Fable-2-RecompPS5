@@ -33,15 +33,16 @@ includes = ["fable2_switch_tables.toml"]
 # [[entrypoint.*]] array table: below one, TOML puts them in that table's
 # last entry, where codegen never reads them (they sat under the last
 # midasm_hook until 2026-11-21, so none was in effect).
-# non_argument_as_local (r0/r2/r11/r12 as locals) is left off: with it the
-# title crashed at startup - likely a callee that takes an argument in r11 or
-# r12 (such as a stack probe given the frame size in r12).
+# non_argument_as_local and non_volatile_as_local are left off: with all of
+# them the title crashed at startup, and still did without
+# non_argument_as_local (a null-pointer read at guest 0x64 both times).
+# Suspects: SEH funclets not detected as sharing their owner's registers
+# (they read the owner's r31 from ctx), hand-written overrides.
 skip_lr = true
 ctr_as_local = true
 xer_as_local = true
 reserved_as_local = true
 cr_as_local = true
-non_volatile_as_local = true
 
 # mtmsrd/mfmsr (the 360's "interrupts off" around spinlocks and refcounts)
 # without the SDK global lock. The guest's own lwarx/stwcx compare-and-swap
