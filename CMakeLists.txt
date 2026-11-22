@@ -205,7 +205,9 @@ endif()
 # bottom of fable2_func_trace.h (which redefines REX_FUNC_PROLOGUE) runs with
 # the generated pch already loaded, and the patched macro is baked into the
 # PCH used by every recompiled TU.
-if(TARGET fable_2_recomp)
+# Not on the PS5: the check runs at every guest function entry (a load and a
+# branch, inlined into ~80,000 functions) and the PS5 build has no use for it.
+if(TARGET fable_2_recomp AND NOT PS5)
     target_precompile_headers(fable_2_recomp PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/fable2_func_trace.h)
 endif()
