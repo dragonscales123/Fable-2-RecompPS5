@@ -144,6 +144,14 @@ if [[ -n $copy_to && -f $copy_to/$title_id/sce_sys/pic0.png ]] &&
     cp -p "$copy_to/$title_id/sce_sys/pic0.png" "$root/ps5/sce_sys/pic0.local.png"
     echo "home screen background: $copy_to/$title_id/sce_sys/pic0.png"
 fi
+# Likewise a personal icon put there as icon0.local.png (the build writes the
+# title's icon0.png from ps5/sce_sys/icon0.local.png).
+if [[ -n $copy_to && -f $copy_to/$title_id/sce_sys/icon0.local.png ]] &&
+   [[ ! -f $root/ps5/sce_sys/icon0.local.png ||
+      $copy_to/$title_id/sce_sys/icon0.local.png -nt $root/ps5/sce_sys/icon0.local.png ]]; then
+    cp -p "$copy_to/$title_id/sce_sys/icon0.local.png" "$root/ps5/sce_sys/icon0.local.png"
+    echo "home screen icon: $copy_to/$title_id/sce_sys/icon0.local.png"
+fi
 # Its BC7 DDS (what the home screen draws): from the PNG, with numpy and
 # Pillow; otherwise a pic0.dds put next to the copied PNG is used as is.
 pic0_png=$root/ps5/sce_sys/pic0.local.png pic0_dds=$root/ps5/sce_sys/pic0.local.dds
