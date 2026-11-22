@@ -144,6 +144,23 @@ if [[ -n $copy_to && -f $copy_to/$title_id/sce_sys/pic0.png ]] &&
     cp -p "$copy_to/$title_id/sce_sys/pic0.png" "$root/ps5/sce_sys/pic0.local.png"
     echo "home screen background: $copy_to/$title_id/sce_sys/pic0.png"
 fi
+# Its BC7 DDS (what the home screen draws): from the PNG, with numpy and
+# Pillow; otherwise a pic0.dds put next to the copied PNG is used as is.
+pic0_png=$root/ps5/sce_sys/pic0.local.png pic0_dds=$root/ps5/sce_sys/pic0.local.dds
+if [[ -f $pic0_png && ( ! -f $pic0_dds || $pic0_png -nt $pic0_dds ) ]]; then
+    if python3 "$root/ps5/tools/png_to_bc7_dds.py" "$pic0_png" "$pic0_dds.tmp" 2> /dev/null; then
+        mv "$pic0_dds.tmp" "$pic0_dds"
+        echo "home screen background: converted to BC7 DDS"
+    else
+        rm -f "$pic0_dds.tmp"
+        if [[ -n $copy_to && -f $copy_to/$title_id/sce_sys/pic0.dds ]]; then
+            cp -p "$copy_to/$title_id/sce_sys/pic0.dds" "$pic0_dds"
+            echo "home screen background: $copy_to/$title_id/sce_sys/pic0.dds (no numpy/Pillow to convert)"
+        else
+            echo "home screen background: no numpy/Pillow - pic0.dds not made (the home screen won't show it)"
+        fi
+    fi
+fi
 configure() {
     cmake -S "$root" -B "$build" -G Ninja \
         -DCMAKE_TOOLCHAIN_FILE="$toolchain" \

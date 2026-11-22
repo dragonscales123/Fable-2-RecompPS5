@@ -206,11 +206,15 @@ local_icon="$(dirname "$icon")/icon0.local.png"
 cp "$icon" "$app/sce_sys/icon0.png"
 # A personal home screen background (pic0.local.png, 3840x2160 PNG, ignored by
 # git): the art shown while the title is selected.
+# The home screen itself draws pic0.dds / pic1.dds (BC7; build.sh makes
+# pic0.local.dds from the PNG), so those go in too.
 local_pic0="$(dirname "$icon")/pic0.local.png"
-if [[ -f $local_pic0 ]]; then
-    cp "$local_pic0" "$app/sce_sys/pic0.png"
-else
-    rm -f "$app/sce_sys/pic0.png"
+local_pic0_dds="$(dirname "$icon")/pic0.local.dds"
+rm -f "$app/sce_sys/pic0.png" "$app/sce_sys/pic0.dds" "$app/sce_sys/pic1.dds"
+[[ -f $local_pic0 ]] && cp "$local_pic0" "$app/sce_sys/pic0.png"
+if [[ -f $local_pic0_dds ]]; then
+    cp "$local_pic0_dds" "$app/sce_sys/pic0.dds"
+    cp "$local_pic0_dds" "$app/sce_sys/pic1.dds"
 fi
 [[ -f ${env_example:-} ]] && cp "$env_example" "$app/ps5-env.example.txt"
 # The recomp's Lua scripts (debug menu / F5) go where the game looks for
