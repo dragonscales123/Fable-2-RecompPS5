@@ -7,8 +7,9 @@ SDK's PS5 port (github.com/dragonscales123/rexglue-sdk-PS5, branch
 `fable2-ps5`: the PS5 port with himdo's Fable 2 SDK changes merged in).
 
 Status: **work in progress, playable.** The game boots and runs on a PS5, held
-at its 60 fps cap in normal gameplay; the heaviest areas (Bowerstone Market)
-run at about 35 fps so far. See the progress list in the README.
+at its 60 fps cap in normal gameplay; the busiest view of Bowerstone Market
+runs at about 49 fps so far (55-60 fps elsewhere). See the progress list in
+the README.
 
 You need your own Fable 2 GOTY (USA/Europe) disc. Nothing from the game is in
 this repository, and nothing derived from it should be published.

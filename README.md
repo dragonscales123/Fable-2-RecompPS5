@@ -4,19 +4,26 @@
 
 The game renders through the SDK's Xbox 360 GPU emulation on Vulkan, with Mesa's RADV driver built into the title. Build instructions and requirements are in [docs/PS5.md](docs/PS5.md). You need your own Fable 2 GOTY (USA/Europe) disc; nothing from the game is in this repository.
 
+## Download
+
+A public beta for the PS5 is on the [Releases](https://github.com/dragonscales123/fable-2-recompps5/releases) page (`ps5-public-build-beta`). The release notes explain how to extract the game from your `.iso` and install it on the console. You need your own Fable 2 GOTY disc image; the release contains no game data.
+
 ## PS5 progress
 
-Work in progress, but playable:
+Work in progress, but playable from start to finish in normal gameplay:
 
 - [x] Boots and runs on a PS5, in game with controller input
 - [x] Shaders cached between runs, so effects don't hitch the first time they appear
 - [x] 60 fps cap, held in normal gameplay
-- [x] GPU command processing split across several threads (command parsing, draw encoding, submission)
-- [ ] Locked 60 fps in the heaviest areas: Bowerstone Market is at about 35 fps (it started around 22)
-- [ ] Occasional texture pop-in
-- [ ] The glowing breadcrumb trail can flicker at some camera angles
+- [x] GPU emulation on three threads: command stream parsing, draw preparation and Vulkan command encoding, with the encoding thread submitting work to the GPU itself
+- [x] Home screen icon and background art
+- [ ] Locked 60 fps in the heaviest areas: the busiest view of Bowerstone Market runs at about **49 fps** (it started around 22), other views at 55–60 fps
+- [ ] The glowing breadcrumb trail can pop in and out at some camera angles
 
-Performance work is ongoing, with Bowerstone Market as the benchmark.
+Bowerstone Market is the benchmark for performance work. Next on the list:
+making the two GPU emulation threads that now set the pace faster, and turning
+on the rest of the recompiler's register optimizations (two of them still crash
+at startup).
 
 ---
 
