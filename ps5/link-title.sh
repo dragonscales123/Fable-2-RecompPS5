@@ -204,6 +204,14 @@ PY
 local_icon="$(dirname "$icon")/icon0.local.png"
 [[ -f $local_icon ]] && icon=$local_icon
 cp "$icon" "$app/sce_sys/icon0.png"
+# A personal home screen background (pic0.local.png, 3840x2160 PNG, ignored by
+# git): the art shown while the title is selected.
+local_pic0="$(dirname "$icon")/pic0.local.png"
+if [[ -f $local_pic0 ]]; then
+    cp "$local_pic0" "$app/sce_sys/pic0.png"
+else
+    rm -f "$app/sce_sys/pic0.png"
+fi
 [[ -f ${env_example:-} ]] && cp "$env_example" "$app/ps5-env.example.txt"
 # The recomp's Lua scripts (debug menu / F5) go where the game looks for
 # them; the game adds them to data/dir.manifest itself on start

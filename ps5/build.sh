@@ -134,6 +134,16 @@ echo "$toolchain" > "$toolchain_record"
 # Perf counters stay on (the SDK default): Fable2App reads the frame time
 # through rex::perf::GetSnapshotCounter, which only exists with them. In a
 # Release build the counting itself is compiled out.
+# A home screen background put in the copy-to title folder
+# (<copy-to>/<title id>/sce_sys/pic0.png) becomes the build's own
+# (ps5/sce_sys/pic0.local.png, ignored by git) whenever it's newer, so every
+# build ships it.
+if [[ -n $copy_to && -f $copy_to/$title_id/sce_sys/pic0.png ]] &&
+   [[ ! -f $root/ps5/sce_sys/pic0.local.png ||
+      $copy_to/$title_id/sce_sys/pic0.png -nt $root/ps5/sce_sys/pic0.local.png ]]; then
+    cp -p "$copy_to/$title_id/sce_sys/pic0.png" "$root/ps5/sce_sys/pic0.local.png"
+    echo "home screen background: $copy_to/$title_id/sce_sys/pic0.png"
+fi
 configure() {
     cmake -S "$root" -B "$build" -G Ninja \
         -DCMAKE_TOOLCHAIN_FILE="$toolchain" \
