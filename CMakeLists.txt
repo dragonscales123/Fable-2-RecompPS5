@@ -149,7 +149,20 @@ add_custom_command(TARGET fable_2 POST_BUILD
 # functions (fopen, getenv, strcat, strncat, ...), which the MSVC/UCRT headers
 # mark deprecated when compiled with clang (-Wdeprecated-declarations noise).
 # These are safe in this codebase; silence the deprecation on Windows.
+# Commit this build was made from, shown in the debug overlay and the log.
+# (Configure runs on every ps5/build.sh run, so it stays current.)
+execute_process(
+    COMMAND git rev-parse --short=7 HEAD
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE FABLE2_BUILD_ID
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET)
+if(NOT FABLE2_BUILD_ID)
+    set(FABLE2_BUILD_ID "unknown")
+endif()
+
 target_compile_definitions(fable_2 PRIVATE
+    FABLE2_BUILD_ID="${FABLE2_BUILD_ID}"
     FABLE2_BUILD_PROFILE="${FABLE2_BUILD_PROFILE}"
     FABLE2_NATIVE_CONFIGURATION="$<CONFIG>"
     FABLE2_NATIVE_SDK="$<IF:$<BOOL:${FABLE2_CODEGEN_TOOL}>,source-built,external>"
