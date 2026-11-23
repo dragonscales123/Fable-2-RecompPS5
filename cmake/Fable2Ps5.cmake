@@ -16,6 +16,10 @@ set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 # The console's CPU is an 8-core Zen 2.
 add_compile_options(-march=znver2)
+# Trail test 2026-11-22: no FMA contraction of a*b+c expressions. The PC build
+# has no FMA (plain x86-64 + SSE4.1), so its float results come out unfused;
+# znver2 lets clang fuse them, which changes rounding in the game's math.
+add_compile_options(-ffp-contract=off)
 
 get_filename_component(_fable2_ps5_parent "${CMAKE_SOURCE_DIR}/.." ABSOLUTE)
 set(FABLE2_PS5_VULKAN_DIR "${_fable2_ps5_parent}/PS5_Vulkan" CACHE PATH "PS5_Vulkan checkout (RADV for the console)")
