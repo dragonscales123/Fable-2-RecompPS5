@@ -38,14 +38,11 @@ includes = ["fable2_switch_tables.toml"]
 # non_argument_as_local (a null-pointer read at guest 0x64 both times).
 # Suspects: SEH funclets not detected as sharing their owner's registers
 # (they read the owner's r31 from ctx), hand-written overrides.
-# Trail test 2026-11-22: the PC recomp (upstream) runs with none of these in
-# effect (its copy sits under a midasm_hook), and its glowing trail shows far
-# more often. Off to check whether they change the trail's game logic.
-skip_lr = false
-ctr_as_local = false
-xer_as_local = false
-reserved_as_local = false
-cr_as_local = false
+skip_lr = true
+ctr_as_local = true
+xer_as_local = true
+reserved_as_local = true
+cr_as_local = true
 
 # mtmsrd/mfmsr (the 360's "interrupts off" around spinlocks and refcounts)
 # without the SDK global lock. The guest's own lwarx/stwcx compare-and-swap
