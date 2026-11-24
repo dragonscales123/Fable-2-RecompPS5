@@ -74,14 +74,12 @@ void Breadcrumb(const char *line) {
 
 namespace {
 
-// KEY=VALUE lines from /app0/ps5-env.txt become environment variables, so
-// REX_* cvar overrides work on the console (ps5-env.example.txt).
-void ReadEnvFile() {
-  FILE *env = std::fopen("/app0/ps5-env.txt", "r");
-  if (!env) {
-    Breadcrumb("main: no ps5-env.txt");
-    return;
-  }
+// KEY=VALUE lines from a file become environment variables, so REX_* cvar
+// overrides work on the console. Returns false when there's no such file.
+bool ReadKeyValueFile(const char *path, const char *name) {
+  FILE *env = std::fopen(path, "r");
+  if (!env)
+    return false;
   char line[512];
   while (std::fgets(line, sizeof(line), env)) {
     line[std::strcspn(line, "\r\n")] = '\0';
@@ -91,10 +89,19 @@ void ReadEnvFile() {
     *equals = '\0';
     setenv(line, equals + 1, 1);
     char crumb[600];
-    std::snprintf(crumb, sizeof(crumb), "main: ps5-env.txt %s=%s", line, equals + 1);
+    std::snprintf(crumb, sizeof(crumb), "main: %s %s=%s", name, line, equals + 1);
     Breadcrumb(crumb);
   }
   std::fclose(env);
+  return true;
+}
+
+// /app0/ps5-env.txt (ps5-env.example.txt), then the in-game graphics menu's
+// /app0/ps5-graphics.txt, so the player's menu choices win.
+void ReadEnvFile() {
+  if (!ReadKeyValueFile("/app0/ps5-env.txt", "ps5-env.txt"))
+    Breadcrumb("main: no ps5-env.txt");
+  ReadKeyValueFile("/app0/ps5-graphics.txt", "ps5-graphics.txt");
 }
 
 void InitializeTitle() {
