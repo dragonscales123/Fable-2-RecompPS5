@@ -4,6 +4,15 @@
 #
 # Any SDK setting (cvar) can be set as REX_<NAME>: gpu_vsync -> REX_GPU_VSYNC.
 # Lines starting with # are ignored.
+#
+# Graphics settings (resolution, texture filtering, anti-aliasing, frame cap)
+# are easier from the in-game menu: click the touchpad and press Options
+# together. It saves them to ps5-graphics.txt, which is read after this file,
+# so the menu's choices win. Delete ps5-graphics.txt to undo them.
+
+# Internal resolution scale: 2 = 2560x1440 (PS5 default), 1 = 1280x720.
+#REX_DRAW_RESOLUTION_SCALE_X=1
+#REX_DRAW_RESOLUTION_SCALE_Y=1
 
 # Log every Vulkan debug message (slow; for chasing renderer problems).
 #REX_VULKAN_LOG_DEBUG_MESSAGES=true

@@ -109,6 +109,21 @@ class Fable2App : public rex::ReXApp {
   void OnPreSetup(rex::RuntimeConfig& config) override {
     std::string plugin = config.gpu_plugin.empty() ? "xenos" : config.gpu_plugin;
     config.gpu_plugin = plugin;
+#if REX_PLATFORM_PS5
+    // 2x internal resolution (2560x1440) by default on the PS5. Seeded only at
+    // the compiled default, so the in-game graphics menu (touchpad + Options,
+    // saved to ps5-graphics.txt) or ps5-env.txt can choose 1x. Seeded here, before
+    // the runtime creates the texture cache, which reads the scale once.
+    if (rex::cvar::GetFlagSource("draw_resolution_scale_x") == rex::cvar::Source::kDefault &&
+        rex::cvar::GetFlagSource("draw_resolution_scale_y") == rex::cvar::Source::kDefault) {
+      if (rex::cvar::SetFlagByName("draw_resolution_scale_x", "2") &&
+          rex::cvar::SetFlagByName("draw_resolution_scale_y", "2")) {
+        REXSYS_INFO("[fable2-config] seeded draw_resolution_scale=2 (2560x1440)");
+      } else {
+        REXSYS_WARN("[fable2-config] draw_resolution_scale missing (SDK too old?)");
+      }
+    }
+#endif
     if (plugin == "xenos-vulkan") {
       // Load the source-built plugin and force the Vulkan backend. It is
       // compiled with both D3D12 and Vulkan; the default "any" would pick
