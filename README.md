@@ -6,7 +6,7 @@ The game renders through the SDK's Xbox 360 GPU emulation on Vulkan, with Mesa's
 
 ## Download
 
-A public beta for the PS5 is on the [Releases](https://github.com/dragonscales123/fable-2-recompps5/releases) page (`ps5-public-build-beta`). The release notes explain how to extract the game from your `.iso` and install it on the console. You need your own Fable 2 GOTY disc image; the release contains no game data.
+The latest PS5 public beta is on the [Releases](https://github.com/dragonscales123/fable-2-recompps5/releases) page (`ps5-public-build-beta2`). It has an in-game graphics menu: click the touchpad and press Options together. The release notes explain how to extract the game from your `.iso` and install it on the console. You need your own Fable 2 GOTY disc image; the release contains no game data.
 
 ## PS5 progress
 
